@@ -47,6 +47,7 @@
             text-shadow: 0 0 10px #00f2ff, 0 0 20px #00f2ff;
             z-index: 100;
             letter-spacing: 2px;
+            transition: opacity 0.5s;
         }
         
         #start-screen, #game-over {
@@ -209,6 +210,7 @@
         
         // DOM elements
         const gameScreen = document.getElementById('game-screen');
+        const titleElement = document.getElementById('title');
         const particlesContainer = document.getElementById('particles');
         const startScreen = document.getElementById('start-screen');
         const gameOverScreen = document.getElementById('game-over');
@@ -323,7 +325,7 @@
             }
         }
         
-        // Player object
+        // Player object with improved texture
         class Player {
             constructor() {
                 this.width = 48;
@@ -337,7 +339,7 @@
                 this.element.className = 'game-object';
                 this.element.style.width = this.width + 'px';
                 this.element.style.height = this.height + 'px';
-                this.element.style.backgroundImage = 'url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCI+PHBhdGggZmlsbD0iIzBmZiIgZD0iTTI0IDM2TDMwIDI0TDI0IDEyTDE4IDI0TDI0IDM2WiIvPjxwYXRoIGZpbGw9IiMwMGMzZGIiIGQ9Ik0xMiAyNEwyNCAzMEwzNiAyNEwyNCAxOEwxMiAyNFoiLz48cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IiMwMGMzZGIiIHN0cm9rZS13aWR0aD0iMiIgZD0iTTI0IDhMMjQgNDBNOCAyNEw0MCAyNCIvPjwvc3ZnPg==")';
+                this.element.style.backgroundImage = 'url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCI+PHBhdGggZmlsbD0iIzBmZiIgZD0iTTI0IDM2TDMwIDI0TDI0IDEyTDE4IDI0TDI0IDM2WiIvPjxwYXRoIGZpbGw9IiMwMGMzZGIiIGQ9Ik0xMiAyNEwyNCAzMEwzNiAyNEwyNCAxOEwxMiAyNFoiLz48cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IiMwMGMzZGIiIHN0cm9rZS13aWR0aD0iMiIgZD0iTTI0IDhMMjQgNDBNOCAyNEw0MCAyNCIvPjxwYXRoIGZpbGw9IiMwMGMzZGIiIGQ9Ik0yNCA0MEwyNCA0NCIvPjxwYXRoIGZpbGw9IiMwMGMzZGIiIGQ9Ik0xNiAzNkwyMCA0MCIvPjxwYXRoIGZpbGw9IiMwMGMzZGIiIGQ9Ik0zMiAzNkwyOCA0MCIvPjxwYXRoIGZpbGw9IiMwMGMzZGIiIGQ9Ik0yNCAzNkwyNCA0MCIvPjxjaXJjbGUgZmlsbD0iIzAwYzNkYiIgY3g9IjI0IiBjeT0iMjQiIHI9IjQiLz48Y2lyY2xlIGZpbGw9IiNmZmYiIGN4PSIyNCIgY3k9IjI0IiByPSIyIi8+PC9zdmc+")';
                 this.element.style.left = this.x + 'px';
                 this.element.style.top = this.y + 'px';
                 gameScreen.appendChild(this.element);
@@ -443,7 +445,7 @@
             }
         }
         
-        // Enemy UFO object
+        // Enemy UFO object with improved texture
         class Enemy {
             constructor() {
                 this.width = 42;
@@ -460,12 +462,12 @@
                 this.element.style.height = this.height + 'px';
                 
                 if (this.type === 1) {
-                    // Standard UFO
-                    this.element.style.backgroundImage = 'url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MiAyNCI+PGVsbGlwc2UgZmlsbD0iIzAwYzNkYiIgY3g9IjIxIiBjeT0iMTIiIHJ4PSIyMSIgcnk9IjEyIi8+PGVsbGlwc2UgZmlsbD0iIzBmZiIgY3g9IjIxIiBjeT0iMTIiIHJ4PSIxNSIgcnk9IjgiLz48ZWxsaXBzZSBmaWxsPSIjMDBhY2YwIiBjeD0iMjEiIGN5PSIxMiIgcng9IjgiIHJ5PSI0Ii8+PGNpcmNsZSBmaWxsPSIjZmZmIiBjeD0iMTUiIGN5PSIxMiIgcj0iMSIvPjxjaXJjbGUgZmlsbD0iI2ZmZiIgY3g9IjIxIiBjeT0iMTIiIHI9IjEiLz48Y2lyY2xlIGZpbGw9IiNmZmYiIGN4PSIyNyIgY3k9IjEyIiByPSIxIi8+PC9zdmc+")';
+                    // Standard UFO with improved texture
+                    this.element.style.backgroundImage = 'url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MiAyNCI+PGVsbGlwc2UgZmlsbD0iIzAwYzNkYiIgY3g9IjIxIiBjeT0iMTIiIHJ4PSIyMSIgcnk9IjEyIi8+PGVsbGlwc2UgZmlsbD0iIzBmZiIgY3g9IjIxIiBjeT0iMTIiIHJ4PSIxNSIgcnk9IjgiLz48ZWxsaXBzZSBmaWxsPSIjMDBhY2YwIiBjeD0iMjEiIGN5PSIxMiIgcng9IjgiIHJ5PSI0Ii8+PGNpcmNsZSBmaWxsPSIjZmZmIiBjeD0iMTUiIGN5PSIxMiIgcj0iMSIvPjxjaXJjbGUgZmlsbD0iI2ZmZiIgY3g9IjIxIiBjeT0iMTIiIHI9IjEiLz48Y2lyY2xlIGZpbGw9IiNmZmYiIGN4PSIyNyIgY3k9IjEyIiByPSIxIi8+PHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDBhY2YwIiBzdHJva2Utd2lkdGg9IjEiIGQ9Ik0xNSAxMEwyNyAxME0xNSAxNEwyNyAxNCIvPjwvc3ZnPg==")';
                 } else {
-                    // Stronger UFO
+                    // Stronger UFO with improved texture
                     this.health = 3;
-                    this.element.style.backgroundImage = 'url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MiAyNCI+PGVsbGlwc2UgZmlsbD0iI2ZmMDAwMCIgY3g9IjIxIiBjeT0iMTIiIHJ4PSIyMSIgcnk9IjEyIi8+PGVsbGlwc2UgZmlsbD0iI2ZmY2MwMCIgY3g9IjIxIiBjeT0iMTIiIHJ4PSIxNSIgcnk9IjgiLz48ZWxsaXBzZSBmaWxsPSIjZmY4ODAwIiBjeD0iMjEiIGN5PSIxMiIgcng9IjgiIHJ5PSI0Ii8+PGNpcmNsZSBmaWxsPSIjZmZmIiBjeD0iMTUiIGN5PSIxMiIgcj0iMSIvPjxjaXJjbGUgZmlsbD0iI2ZmZiIgY3g9IjIxIiBjeT0iMTIiIHI9IjEiLz48Y2lyY2xlIGZpbGw9IiNmZmYiIGN4PSIyNyIgY3k9IjEyIiByPSIxIi8+PC9zdmc+")';
+                    this.element.style.backgroundImage = 'url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MiAyNCI+PGVsbGlwc2UgZmlsbD0iI2ZmMDAwMCIgY3g9IjIxIiBjeT0iMTIiIHJ4PSIyMSIgcnk9IjEyIi8+PGVsbGlwc2UgZmlsbD0iI2ZmY2MwMCIgY3g9IjIxIiBjeT0iMTIiIHJ4PSIxNSIgcnk9IjgiLz48ZWxsaXBzZSBmaWxsPSIjZmY4ODAwIiBjeD0iMjEiIGN5PSIxMiIgcng9IjgiIHJ5PSI0Ii8+PGNpcmNsZSBmaWxsPSIjZmZmIiBjeD0iMTUiIGN5PSIxMiIgcj0iMSIvPjxjaXJjbGUgZmlsbD0iI2ZmZiIgY3g9IjIxIiBjeT0iMTIiIHI9IjEiLz48Y2lyY2xlIGZpbGw9IiNmZmYiIGN4PSIyNyIgY3k9IjEyIiByPSIxIi8+PHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmY4ODAwIiBzdHJva2Utd2lkdGg9IjEiIGQ9Ik0xNSAxMEwyNyAxME0xNSAxNEwyNyAxNCIvPjxwYXRoIGZpbGw9IiNmZmNjMDAiIGQ9Ik0xMCA2TDE2IDlMMTAgMTJaIi8+PHBhdGggZmlsbD0iI2ZmY2MwMCIgZD0iTTMyIDZMMjYgOUwzMiAxMloiLz48L3N2Zz4=")';
                 }
                 
                 this.element.style.left = this.x + 'px';
@@ -573,7 +575,7 @@
             }
         }
         
-        // Boss UFO object
+        // Boss UFO object with improved texture
         class Boss {
             constructor() {
                 this.width = 120;
@@ -589,7 +591,7 @@
                 this.element.className = 'game-object';
                 this.element.style.width = this.width + 'px';
                 this.element.style.height = this.height + 'px';
-                this.element.style.backgroundImage = 'url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAgNjAiPjxlbGxpcHNlIGZpbGw9IiNmZjAwMDAiIGN4PSI2MCIgY3k9IjMwIiByeD0iNjAiIHJ5PSIzMCIvPjxlbGxpcHNlIGZpbGw9IiNmZmNjMDAiIGN4PSI2MCIgY3k9IjMwIiByeD0iNDUiIHJ5PSIyMCIvPjxlbGxpcHNlIGZpbGw9IiNmZjg4MDAiIGN4PSI2MCIgY3k9IjMwIiByeD0iMzAiIHJ5PSIxNSIvPjxjaXJjbGUgZmlsbD0iI2ZmZiIgY3g9IjQwIiBjeT0iMzAiIHI9IjIiLz48Y2lyY2xlIGZpbGw9IiNmZmYiIGN4PSI2MCIgY3k9IjMwIiByPSIyIi8+PGNpcmNsZSBmaWxsPSIjZmZmIiBjeD0iODAiIGN5PSIzMCIgcj0iMiIvPjxwYXRoIGZpbGw9IiNmZmNjMDAiIGQ9Ik0zMCAxMEw0MCAxNUwzMCAyMFoiLz48cGF0aCBmaWxsPSIjZmZjYzAwIiBkPSJNOTAgMTBMODAgMTVMOTAgMjBaIi8+PC9zdmc+")';
+                this.element.style.backgroundImage = 'url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAgNjAiPjxlbGxpcHNlIGZpbGw9IiNmZjAwMDAiIGN4PSI2MCIgY3k9IjMwIiByeD0iNjAiIHJ5PSIzMCIvPjxlbGxpcHNlIGZpbGw9IiNmZmNjMDAiIGN4PSI2MCIgY3k9IjMwIiByeD0iNDUiIHJ5PSIyMCIvPjxlbGxpcHNlIGZpbGw9IiNmZjg4MDAiIGN4PSI2MCIgY3k9IjMwIiByeD0iMzAiIHJ5PSIxNSIvPjxjaXJjbGUgZmlsbD0iI2ZmZiIgY3g9IjQwIiBjeT0iMzAiIHI9IjIiLz48Y2lyY2xlIGZpbGw9IiNmZmYiIGN4PSI2MCIgY3k9IjMwIiByPSIyIi8+PGNpcmNsZSBmaWxsPSIjZmZmIiBjeD0iODAiIGN5PSIzMCIgcj0iMiIvPjxwYXRoIGZpbGw9IiNmZmNjMDAiIGQ9Ik0zMCAxMEw0MCAxNUwzMCAyMFoiLz48cGF0aCBmaWxsPSIjZmZjYzAwIiBkPSJNOTAgMTBMODAgMTVMOTAgMjBaIi8+PHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmY4ODAwIiBzdHJva2Utd2lkdGg9IjEiIGQ9Ik0zNSAxNUw0NSAxNU0zNSAxOUw0NSAxOU0zNSAyM0w0NSAyM003NSAxNUw4NSAxNU03NSAxOUw4NSAxOU03NSAyM0w4NSAyMyIvPjxwYXRoIGZpbGw9IiNmZmNjMDAiIGQ9Ik0yMCAxNUwxNSAyMEwyMCAyNVoiLz48cGF0aCBmaWxsPSIjZmZjYzAwIiBkPSJNMTAwIDE1TDEwNSAyMEwxMDAgMjVaIi8+PC9zdmc+")';
                 this.element.style.left = this.x + 'px';
                 this.element.style.top = this.y + 'px';
                 gameScreen.appendChild(this.element);
@@ -597,23 +599,23 @@
                 // Health bar background
                 this.healthBarBg = document.createElement('div');
                 this.healthBarBg.style.position = 'absolute';
-                this.healthBarBg.style.width = '100px';
-                this.healthBarBg.style.height = '10px';
+                this.healthBarBg.style.width = '120px';
+                this.healthBarBg.style.height = '12px';
                 this.healthBarBg.style.backgroundColor = '#333';
-                this.healthBarBg.style.left = (this.x + this.width/2 - 50) + 'px';
-                this.healthBarBg.style.top = (this.y - 20) + 'px';
-                this.healthBarBg.style.borderRadius = '5px';
+                this.healthBarBg.style.left = (this.x + this.width/2 - 60) + 'px';
+                this.healthBarBg.style.top = (this.y - 25) + 'px';
+                this.healthBarBg.style.borderRadius = '6px';
                 gameScreen.appendChild(this.healthBarBg);
                 
                 // Health bar
                 this.healthBar = document.createElement('div');
                 this.healthBar.style.position = 'absolute';
-                this.healthBar.style.width = '100px';
-                this.healthBar.style.height = '10px';
+                this.healthBar.style.width = '120px';
+                this.healthBar.style.height = '12px';
                 this.healthBar.style.backgroundColor = '#0f0';
-                this.healthBar.style.left = (this.x + this.width/2 - 50) + 'px';
-                this.healthBar.style.top = (this.y - 20) + 'px';
-                this.healthBar.style.borderRadius = '5px';
+                this.healthBar.style.left = (this.x + this.width/2 - 60) + 'px';
+                this.healthBar.style.top = (this.y - 25) + 'px';
+                this.healthBar.style.borderRadius = '6px';
                 gameScreen.appendChild(this.healthBar);
                 
                 this.shootCounter = 0;
@@ -626,8 +628,8 @@
                 if (this.y < 50) {
                     this.y += this.speed;
                     this.element.style.top = this.y + 'px';
-                    this.healthBarBg.style.top = (this.y - 20) + 'px';
-                    this.healthBar.style.top = (this.y - 20) + 'px';
+                    this.healthBarBg.style.top = (this.y - 25) + 'px';
+                    this.healthBar.style.top = (this.y - 25) + 'px';
                     return false;
                 }
                 
@@ -643,8 +645,8 @@
                 if (this.x > gameScreen.offsetWidth - this.width) this.x = gameScreen.offsetWidth - this.width;
                 
                 this.element.style.left = this.x + 'px';
-                this.healthBarBg.style.left = (this.x + this.width/2 - 50) + 'px';
-                this.healthBar.style.left = (this.x + this.width/2 - 50) + 'px';
+                this.healthBarBg.style.left = (this.x + this.width/2 - 60) + 'px';
+                this.healthBar.style.left = (this.x + this.width/2 - 60) + 'px';
                 
                 // Shooting patterns
                 this.shootCounter++;
@@ -755,11 +757,11 @@
             }
         }
         
-        // Bullet object
+        // Bullet object with improved texture
         class Bullet {
             constructor(x, y) {
-                this.width = 6;
-                this.height = 18;
+                this.width = 8;
+                this.height = 24;
                 this.x = x;
                 this.y = y;
                 this.speed = 12;
@@ -767,9 +769,10 @@
                 this.element.className = 'game-object';
                 this.element.style.width = this.width + 'px';
                 this.element.style.height = this.height + 'px';
-                this.element.style.background = 'linear-gradient(to bottom, #00f2ff, #0088ff)';
-                this.element.style.borderRadius = '3px';
+                this.element.style.background = 'linear-gradient(to bottom, #00f2ff, #0066ff)';
+                this.element.style.borderRadius = '4px';
                 this.element.style.boxShadow = '0 0 10px #00f2ff';
+                this.element.style.borderTop = '2px solid #ffffff';
                 this.element.style.left = this.x + 'px';
                 this.element.style.top = this.y + 'px';
                 gameScreen.appendChild(this.element);
@@ -805,11 +808,11 @@
             }
         }
         
-        // Enemy bullet object
+        // Enemy bullet object with improved texture
         class EnemyBullet {
             constructor(x, y, angle, isBossBullet = false) {
-                this.width = isBossBullet ? 8 : 6;
-                this.height = isBossBullet ? 24 : 18;
+                this.width = isBossBullet ? 10 : 8;
+                this.height = isBossBullet ? 30 : 24;
                 this.x = x;
                 this.y = y;
                 this.speed = isBossBullet ? 7 : 5;
@@ -821,10 +824,11 @@
                 this.element.style.width = this.width + 'px';
                 this.element.style.height = this.height + 'px';
                 this.element.style.background = isBossBullet ? 
-                    'linear-gradient(to bottom, #ff2200, #ff8800)' : 
-                    'linear-gradient(to bottom, #ff0000, #ff00cc)';
-                this.element.style.borderRadius = '3px';
+                    'linear-gradient(to bottom, #ff4400, #ff0000)' : 
+                    'linear-gradient(to bottom, #ff00cc, #ff0066)';
+                this.element.style.borderRadius = '4px';
                 this.element.style.boxShadow = isBossBullet ? '0 0 15px #ff8800' : '0 0 10px #ff00cc';
+                this.element.style.borderTop = '2px solid #ffffff';
                 this.element.style.left = this.x + 'px';
                 this.element.style.top = this.y + 'px';
                 gameScreen.appendChild(this.element);
@@ -865,11 +869,11 @@
             }
         }
         
-        // Power-up object
+        // Power-up object with improved texture
         class PowerUp {
             constructor(x, y) {
-                this.width = 24;
-                this.height = 24;
+                this.width = 32;
+                this.height = 32;
                 this.x = x - this.width/2;
                 this.y = y - this.height/2;
                 this.speed = 2;
@@ -882,13 +886,13 @@
                 
                 switch(this.type) {
                     case 0: // Extra life
-                        this.element.style.backgroundImage = 'url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iI2ZmMDAwMCIgZD0iTTEyIDIxLjM1TDEuNSAxMmgxOUwxMiAyMS4zNVoiIHN0eWxlPSJmaWxsLXJ1bGU6ZXZlbm9kZCIvPjxwYXRoIGZpbGw9IiNmZmZmZmYiIGQ9Ik0xMiAxOC4zNUwzLjUgMTJoMTdMMTIgMTguMzVaIi8+PC9zdmc+")';
+                        this.element.style.backgroundImage = 'url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHBhdGggZmlsbD0iI2ZmMDAwMCIgZD0iTTE2IDI2LjVMNSAxNmgxMUwxNiAyNi41WiIgc3R5bGU9ImZpbGwtcnVsZTpldmVub2RkIi8+PHBhdGggZmlsbD0iI2ZmMDAwMCIgZD0iTTE2IDI2LjVMMjcgMTZIMTZMMTYgMjYuNVoiIHN0eWxlPSJmaWxsLXJ1bGU6ZXZlbm9kZCIvPjxwYXRoIGZpbGw9IiNmZmZmZmYiIGQ9Ik0xNiAyMy41TDkgMTZIMTZMMTYgMjMuNVoiLz48cGF0aCBmaWxsPSIjZmZmZmZmIiBkPSJNMTYgMjMuNUwyMyAxNkgxNkwxNiAyMy41WiIvPjxwYXRoIGZpbGw9IiNmZmZmZmYiIGQ9Ik0xNiAxNkwxNiA1Ii8+PHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjIiIGQ9Ik0xMSAxMUwyMSAyMSIvPjxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIyIiBkPSJNMjEgMTFMMTEgMjEiLz48L3N2Zz4=")';
                         break;
                     case 1: // Rapid fire
-                        this.element.style.backgroundImage = 'url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iIzAwZmZmZiIgZD0iTTEyIDRsOCA4aC0ydjhoLTR2LThoLTJMNyAxMmw1LTVaIi8+PC9zdmc+")';
+                        this.element.style.backgroundImage = 'url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHBhdGggZmlsbD0iIzAwZmZmZiIgZD0iTTE2IDVsMTMgMTNoLTV2MTNoLTE2di0xM2gtNXoiLz48cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IiMwMGMzZGIiIHN0cm9rZS13aWR0aD0iMiIgZD0iTTE2IDVsMTMgMTNoLTV2MTNoLTE2di0xM2gtNXoiLz48cGF0aCBmaWxsPSIjMDBjM2RiIiBkPSJNMTYgMTBsMyAzaC0zeiIvPjxwYXRoIGZpbGw9IiMwMGMzZGIiIGQ9Ik0xNiAxNWwzIDNoLTN6Ii8+PHBhdGggZmlsbD0iIzAwYzNkYiIgZD0iTTE2IDIwbDMgM2gtM3oiLz48L3N2Zz4=")';
                         break;
                     case 2: // Shield
-                        this.element.style.backgroundImage = 'url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iI2ZmY2MwMCIgZD0iTTEyIDFMMiA0djkuMDljMCA3LjU1IDkuMjMgMTEuNzQgOS43MiAxMS45MkwxMiAyMmwxMC4yOC0zLjkxYy40OS0uMTggOS43Mi00LjM3IDkuNzItMTEuOTJWNEwxMiAxWiIvPjwvc3ZnPg==")';
+                        this.element.style.backgroundImage = 'url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHBhdGggZmlsbD0iI2ZmY2MwMCIgZD0iTTE2IDNMMyA3djkuMDljMCA3LjU1IDkuMjMgMTEuNzQgOS43MiAxMS45MkwxNiAzMGwxMy4yOC0zLjkxYy40OS0uMTggOS43Mi00LjM3IDkuNzItMTEuOTJWN0wxNiAzWiIvPjxwYXRoIGZpbGw9IiNmZmZmMDAiIGQ9Ik0xNiA2TDUgMTBsMTEgNHYxMmw3LTJ2LTEybDExLTR6Ii8+PHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDAwMDAwIiBzdHJva2Utd2lkdGg9IjEiIGQ9Ik0xNiA2TDUgMTBsMTEgNHYxMmw3LTJ2LTEybDExLTR6Ii8+PC9zdmc+")';
                         break;
                 }
                 
@@ -1151,6 +1155,9 @@
         
         // Start game
         function startGame() {
+            // Hide title
+            titleElement.style.opacity = '0';
+            
             // Clear existing elements
             document.querySelectorAll('.game-object').forEach(el => el.remove());
             document.querySelectorAll('.stars').forEach(el => el.remove());
@@ -1197,6 +1204,9 @@
             // Show game over screen
             finalScoreDisplay.textContent = score;
             gameOverScreen.style.display = 'flex';
+            
+            // Show title again
+            titleElement.style.opacity = '1';
             
             // Clean up
             if (player) player.destroy();
