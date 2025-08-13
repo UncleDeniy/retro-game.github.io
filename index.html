@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pixel Sky Warrior - 80s Retro Game</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Courier New', monospace;
+            color: #0f0;
+            overflow: hidden;
+        }
+        
+        #game-container {
+            position: relative;
+            width: 400px;
+            height: 600px;
+            background-color: #000;
+            border: 4px solid #0f0;
+            overflow: hidden;
+        }
+        
+        #game-screen {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        #title {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            text-align: center;
+            font-size: 32px;
+            text-shadow: 0 0 10px #0f0;
+            z-index: 100;
+        }
+        
+        #start-screen, #game-over {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+        
+        #game-over {
+            display: none;
+        }
+        
+        button {
+            background-color: #000;
+            color: #0f0;
+            border: 2px solid #0f0;
+            padding: 10px 20px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: #0f0;
+            color: #000;
+        }
+        
+        .pixel {
+            position: absolute;
+            image-rendering: pixelated;
+        }
+        
+        #score {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 16px;
+            z-index: 5;
+        }
+        
+        #lives {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 16px;
+            z-index: 5;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="title">PIXEL SKY WARRIOR</div>
+        <div id="score">SCORE: 0</div>
+        <div id="lives">LIVES: 3</div>
+        
+        <div id="start-screen">
+            <h2>PIXEL SKY WARRIOR</h2>
+            <p>Use ARROW KEYS to move</p>
+            <p>Press SPACE to shoot</p>
+            <p>Destroy enemy planes!</p>
+            <button id="start-button">START MISSION</button>
+        </div>
+        
+        <div id="game-over">
+            <h2>MISSION FAILED</h2>
+            <p id="final-score">SCORE: 0</p>
+            <button id="restart-button">TRY AGAIN</button>
+        </div>
+        
+        <div id="game-screen">
+            <!-- Game elements will be added here dynamically -->
+        </div>
+    </div>
+
+    <audio id="shoot-sound" src="data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU..."></audio>
+    <audio id="explosion-sound" src="data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU..."></audio>
+
+    <script>
+        // Game variables
+        let gameActive = false;
+        let score = 0;
+        let lives = 3;
+        let player;
+        let enemies = [];
+        let bullets = [];
+        let enemyBullets = [];
+        let explosions = [];
+        let keys = {};
+        let gameLoopId;
+        let enemySpawnRate = 100;
+        let enemySpawnCounter = 0;
+        
+        // DOM elements
+        const gameScreen = document.getElementById('game-screen');
+        const startScreen = document.getElementById('start-screen');
+        const gameOverScreen = document.getElementById('game-over');
+        const startButton = document.getElementById('start-button');
+        const restartButton = document.getElementById('restart-button');
+        const scoreDisplay = document.getElementById('score');
+        const livesDisplay = document.getElementById('lives');
+        const finalScoreDisplay = document.getElementById('final-score');
+        const shootSound = document.getElementById('shoot-sound');
+        const explosionSound = document.getElementById('explosion-sound');
+        
+        // Base64 encoded short sound effects (simplified for this example)
+        // In a real game, you would use proper sound files
+        
+        // Player object
+        class Player {
+            constructor() {
+                this.width = 32;
+                this.height = 32;
+                this.x = gameScreen.offsetWidth / 2 - this.width / 2;
+                this.y = gameScreen.offsetHeight - this.height - 20;
+                this.speed = 5;
+                this.element = document.createElement('div');
+                this.element.className = 'pixel';
+                this.element.style.width = this.width + 'px';
+                this.element.style.height = this.height + 'px';
+                this.element.style.background = 'url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHBhdGggZmlsbD0ibGltZSIgZD0iTTE2IDRMMjggMTZMMTYgMjhMNCIDE2WiIvPjwvc3ZnPg==")';
+                this.element.style.left = this.x + 'px';
+                this.element.style.top = this.y + 'px';
+                gameScreen.appendChild(this.element);
+            }
+            
+            update() {
+                if (keys['ArrowLeft'] && this.x > 0) {
+                    this.x -= this.speed;
+                }
+                if (keys['ArrowRight'] && this.x < gameScreen.offsetWidth - this.width) {
+                    this.x += this.speed;
+                }
+                if (keys['ArrowUp'] && this.y > 0) {
+                    this.y -= this.speed;
+                }
+                if (keys['ArrowDown'] && this.y < gameScreen.offsetHeight - this.height) {
+                    this.y += this.speed;
+                }
+                
+                this.element.style.left = this.x + 'px';
+                this.element.style.top = this.y + 'px';
+            }
+            
+            shoot() {
+                bullets.push(new Bullet(this.x + this.width / 2 - 2, this.y));
+                try {
+                    shootSound.currentTime = 0;
+                    shootSound.play();
+                } catch(e) {}
+            }
+            
+            destroy() {
+                gameScreen.removeChild(this.element);
+            }
+        }
+        
+        // Enemy object
+        class Enemy {
+            constructor() {
+                this.width = 32;
+                this.height = 32;
+                this.x = Math.random() * (gameScreen.offsetWidth - this.width);
+                this.y = -this.height;
+                this.speed = 2 + Math.random() * 2;
+                this.element = document.createElement('div');
+                this.element.className = 'pixel';
+                this.element.style.width = this.width + 'px';
+                this.element.style.height = this.height + 'px';
+                this.element.style.background = 'url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHBhdGggZmlsbD0icmVkIiBkPSJNMTYgNEwxNiAyOEw0IDE2WiIvPjxwYXRoIGZpbGw9InJlZCIgZD0iTTE2IDRMMTYgMjhMMjggMTZaIi8+PC9zdmc+")';
+                this.element.style.left = this.x + 'px';
+                this.element.style.top = this.y + 'px';
+                gameScreen.appendChild(this.element);
+                
+                this.shootInterval = Math.floor(Math.random() * 100) + 100;
+                this.shootCounter = 0;
+            }
+            
+            update() {
+                this.y += this.speed;
+                this.element.style.top = this.y + 'px';
+                
+                // Random shooting
+                this.shootCounter++;
+                if (this.shootCounter >= this.shootInterval) {
+                    this.shoot();
+                    this.shootCounter = 0;
+                    this.shootInterval = Math.floor(Math.random() * 100) + 100;
+                }
+                
+                // Remove if out of screen
+                if (this.y > gameScreen.offsetHeight) {
+                    this.destroy();
+                    return true;
+                }
+                return false;
+            }
+            
+            shoot() {
+                enemyBullets.push(new EnemyBullet(this.x + this.width / 2 - 2, this.y + this.height));
+            }
+            
+            destroy() {
+                gameScreen.removeChild(this.element);
+                return true;
+            }
+        }
+        
+        // Bullet object
+        class Bullet {
+            constructor(x, y) {
+                this.width = 4;
+                this.height = 12;
+                this.x = x;
+                this.y = y;
+                this.speed = 8;
+                this.element = document.createElement('div');
+                this.element.className = 'pixel';
+                this.element.style.width = this.width + 'px';
+                this.element.style.height = this.height + 'px';
+                this.element.style.backgroundColor = '#0f0';
+                this.element.style.left = this.x + 'px';
+                this.element.style.top = this.y + 'px';
+                gameScreen.appendChild(this.element);
+            }
+            
+            update() {
+                this.y -= this.speed;
+                this.element.style.top = this.y + 'px';
+                
+                // Remove if out of screen
+                if (this.y < -this.height) {
+                    this.destroy();
+                    return true;
+                }
+                return false;
+            }
+            
+            destroy() {
+                gameScreen.removeChild(this.element);
+                return true;
+            }
+        }
+        
+        // Enemy bullet object
+        class EnemyBullet {
+            constructor(x, y) {
+                this.width = 4;
+                this.height = 12;
+                this.x = x;
+                this.y = y;
+                this.speed = 6;
+                this.element = document.createElement('div');
+                this.element.className = 'pixel';
+                this.element.style.width = this.width + 'px';
+                this.element.style.height = this.height + 'px';
+                this.element.style.backgroundColor = '#f00';
+                this.element.style.left = this.x + 'px';
+                this.element.style.top = this.y + 'px';
+                gameScreen.appendChild(this.element);
+            }
+            
+            update() {
+                this.y += this.speed;
+                this.element.style.top = this.y + 'px';
+                
+                // Remove if out of screen
+                if (this.y > gameScreen.offsetHeight) {
+                    this.destroy();
+                    return true;
+                }
+                return false;
+            }
+            
+            destroy() {
+                gameScreen.removeChild(this.element);
+                return true;
+            }
+        }
+        
+        // Explosion effect
+        class Explosion {
+            constructor(x, y) {
+                this.width = 32;
+                this.height = 32;
+                this.x = x;
+                this.y = y;
+                this.frame = 0;
+                this.maxFrames = 5;
+                this.element = document.createElement('div');
+                this.element.className = 'pixel';
+                this.element.style.width = this.width + 'px';
+                this.element.style.height = this.height + 'px';
+                this.element.style.left = this.x + 'px';
+                this.element.style.top = this.y + 'px';
+                this.updateFrame();
+                gameScreen.appendChild(this.element);
+            }
+            
+            updateFrame() {
+                const colors = ['#ff0', '#f80', '#f00'];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                this.element.style.background = `radial-gradient(circle at center, ${color} 0%, #000 100%)`;
+            }
+            
+            update() {
+                this.frame++;
+                if (this.frame % 2 === 0) {
+                    this.updateFrame();
+                }
+                
+                if (this.frame >= this.maxFrames) {
+                    this.destroy();
+                    return true;
+                }
+                return false;
+            }
+            
+            destroy() {
+                gameScreen.removeChild(this.element);
+                return true;
+            }
+        }
+        
+        // Collision detection
+        function checkCollision(obj1, obj2) {
+            return obj1.x < obj2.x + obj2.width &&
+                   obj1.x + obj1.width > obj2.x &&
+                   obj1.y < obj2.y + obj2.height &&
+                   obj1.y + obj1.height > obj2.y;
+        }
+        
+        // Game loop
+        function gameLoop() {
+            // Update player
+            player.update();
+            
+            // Spawn enemies
+            enemySpawnCounter++;
+            if (enemySpawnCounter >= enemySpawnRate) {
+                enemies.push(new Enemy());
+                enemySpawnCounter = 0;
+                // Increase difficulty
+                enemySpawnRate = Math.max(20, enemySpawnRate - 1);
+            }
+            
+            // Update enemies
+            for (let i = enemies.length - 1; i >= 0; i--) {
+                if (enemies[i].update()) {
+                    enemies.splice(i, 1);
+                }
+            }
+            
+            // Update bullets
+            for (let i = bullets.length - 1; i >= 0; i--) {
+                if (bullets[i].update()) {
+                    bullets.splice(i, 1);
+                }
+            }
+            
+            // Update enemy bullets
+            for (let i = enemyBullets.length - 1; i >= 0; i--) {
+                if (enemyBullets[i].update()) {
+                    enemyBullets.splice(i, 1);
+                }
+            }
+            
+            // Update explosions
+            for (let i = explosions.length - 1; i >= 0; i--) {
+                if (explosions[i].update()) {
+                    explosions.splice(i, 1);
+                }
+            }
+            
+            // Check bullet-enemy collisions
+            for (let i = bullets.length - 1; i >= 0; i--) {
+                for (let j = enemies.length - 1; j >= 0; j--) {
+                    if (checkCollision(bullets[i], enemies[j])) {
+                        explosions.push(new Explosion(enemies[j].x, enemies[j].y));
+                        try {
+                            explosionSound.currentTime = 0;
+                            explosionSound.play();
+                        } catch(e) {}
+                        bullets[i].destroy();
+                        bullets.splice(i, 1);
+                        enemies[j].destroy();
+                        enemies.splice(j, 1);
+                        score += 10;
+                        scoreDisplay.textContent = `SCORE: ${score}`;
+                        break;
+                    }
+                }
+            }
+            
+            // Check enemy bullet-player collisions
+            for (let i = enemyBullets.length - 1; i >= 0; i--) {
+                if (checkCollision(enemyBullets[i], player)) {
+                    explosions.push(new Explosion(player.x, player.y));
+                    try {
+                        explosionSound.currentTime = 0;
+                        explosionSound.play();
+                    } catch(e) {}
+                    enemyBullets[i].destroy();
+                    enemyBullets.splice(i, 1);
+                    lives--;
+                    livesDisplay.textContent = `LIVES: ${lives}`;
+                    
+                    if (lives <= 0) {
+                        gameOver();
+                    } else {
+                        // Reset player position after hit
+                        player.destroy();
+                        player = new Player();
+                    }
+                    break;
+                }
+            }
+            
+            // Check enemy-player collisions
+            for (let i = enemies.length - 1; i >= 0; i--) {
+                if (checkCollision(enemies[i], player)) {
+                    explosions.push(new Explosion(player.x, player.y));
+                    try {
+                        explosionSound.currentTime = 0;
+                        explosionSound.play();
+                    } catch(e) {}
+                    enemies[i].destroy();
+                    enemies.splice(i, 1);
+                    lives--;
+                    livesDisplay.textContent = `LIVES: ${lives}`;
+                    
+                    if (lives <= 0) {
+                        gameOver();
+                    } else {
+                        // Reset player position after hit
+                        player.destroy();
+                        player = new Player();
+                    }
+                    break;
+                }
+            }
+        }
+        
+        // Start game
+        function startGame() {
+            // Reset game state
+            score = 0;
+            lives = 3;
+            enemies = [];
+            bullets = [];
+            enemyBullets = [];
+            explosions = [];
+            enemySpawnRate = 100;
+            enemySpawnCounter = 0;
+            
+            // Update displays
+            scoreDisplay.textContent = `SCORE: ${score}`;
+            livesDisplay.textContent = `LIVES: ${lives}`;
+            
+            // Create player
+            player = new Player();
+            
+            // Hide start screen
+            startScreen.style.display = 'none';
+            gameOverScreen.style.display = 'none';
+            
+            // Start game loop
+            gameActive = true;
+            gameLoopId = setInterval(gameLoop, 1000/60);
+        }
+        
+        // Game over
+        function gameOver() {
+            gameActive = false;
+            clearInterval(gameLoopId);
+            
+            // Show game over screen
+            finalScoreDisplay.textContent = `SCORE: ${score}`;
+            gameOverScreen.style.display = 'flex';
+            
+            // Clean up
+            player.destroy();
+            enemies.forEach(enemy => enemy.destroy());
+            bullets.forEach(bullet => bullet.destroy());
+            enemyBullets.forEach(bullet => bullet.destroy());
+        }
+        
+        // Event listeners
+        startButton.addEventListener('click', startGame);
+        restartButton.addEventListener('click', startGame);
+        
+        window.addEventListener('keydown', (e) => {
+            keys[e.key] = true;
+            
+            if (gameActive && e.key === ' ') {
+                player.shoot();
+            }
+        });
+        
+        window.addEventListener('keyup', (e) => {
+            keys[e.key] = false;
+        });
+    </script>
+</body>
+</html>
